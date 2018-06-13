@@ -1,0 +1,13 @@
+# Modified by Ansible. Do not manually modify.
+PidFile=/var/run/zabbix/zabbix_agentd.pid
+LogFile=/var/log/zabbix/zabbix_agentd.log
+LogFileSize=0
+Server={{ zabbix_server }}
+ListenPort={{ zabbix_port }}
+StartAgents=3
+ServerActive={{ zabbix_server_ip }}
+Hostname={{ ansible_hostname }}
+HostMetadataItem={{ zabbix_host_metadata }}
+RefreshActiveChecks=120
+Include=/etc/zabbix/zabbix_agentd.d/*.conf
+

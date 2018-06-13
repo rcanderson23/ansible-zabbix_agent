@@ -1,0 +1,61 @@
+---
+# Zabbix agent install for Windows clients
+
+- name: make zabbix directory
+  win_file:
+    path: "{{ zabbix_win_dir }}"
+    state: directory
+
+- name: Check if conf files are present
+  win_stat:
+    path: "{{ zabbix_win_dir }}\\conf"
+  register: confdir
+
+- name: Create log file
+  win_file:
+    path: "{{ zabbix_win_dir }}\\zabbix.log"
+    state: touch
+
+- name: copy zabbix archive
+  win_copy:
+    src: "{{ zabbix_win_src_zip }}"
+    dest: "{{ zabbix_win_dir }}\\zabbix_agents_3.2.7.zip"
+    remote_src: True
+  when: confdir.stat.exists == false
+
+- name: unzip zabbix archive
+  win_unzip:
+    src: "{{ zabbix_win_dir }}\\zabbix_agents_3.2.7.zip"
+    dest: "{{ zabbix_win_dir }}"
+  when: confdir.stat.exists == false
+
+- name: copy config file
+  win_template:
+    src: zabbix_agentd.win.conf.j2
+    dest: "{{ zabbix_win_dir }}\\conf\\zabbix_agentd.win.conf"
+  notify: restart windows zabbix
+
+- name: Check if zabbix is installed
+  win_service: 
+    name: Zabbix Agent
+  register: zabbixstatus
+  
+- name: Install zabbix agent
+  win_shell: "{{ zabbix_win_dir }}\\bin\\win64\\zabbix_agentd.exe --config {{ zabbix_win_dir }}\\conf\\zabbix_agentd.win.conf --install"
+  when: zabbixstatus.exists == False 
+    
+- name: Open Zabbix firewall port
+  win_firewall_rule:
+    name: Zabbix Agent
+    localport: "{{ zabbix_port }}"
+    action: allow
+    direction: in
+    protocol: tcp
+    state: present
+    enabled: yes
+
+- name: Ensure zabbix starts on boot
+  win_service:
+    name: Zabbix Agent
+    start_mode: auto
+    state: started

@@ -1,0 +1,11 @@
+---
+# Task file for zabbixagent
+
+- import_tasks: rhel.yml
+  when: 
+    - ansible_os_family == "RedHat"
+
+- import_tasks: windows.yml
+  when: 
+    - ansible_os_family == "Windows"
+

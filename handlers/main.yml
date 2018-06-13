@@ -1,0 +1,16 @@
+---
+# Handlers file for zabbix agent
+- name: restart zabbix agent
+  service: 
+    name: zabbix-agent
+    state: restarted
+
+- name: reload firewall
+  service:
+    name: firewalld
+    state: restarted
+
+- name: restart windows zabbix
+  win_service:
+    name: Zabbix Agent
+    state: restarted

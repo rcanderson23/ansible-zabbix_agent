@@ -1,0 +1,11 @@
+---
+# vars file for zabbixagent
+zabbix_win_dir: C:\zabbix
+zabbix_win_src_zip: \\path\to\zabbix.zip
+zabbix_win_zip: zabbix.zip
+zabbix_server: zabbix.company.com
+zabbix_server_ip: 10.0.0.100
+zabbix_port: 10050
+zabbix_host_metadata: system.uname
+
+

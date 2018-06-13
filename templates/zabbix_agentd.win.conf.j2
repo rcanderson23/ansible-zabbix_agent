@@ -1,0 +1,9 @@
+# Modified by Ansible. Do not manually modify.
+LogFile={{ zabbix_win_dir }}\zabbix.log
+Server={{ zabbix_server }}
+ListenPort={{ zabbix_port }}
+ServerActive={{ zabbix_server_ip }}
+Hostname={{ ansible_hostname }}
+HostMetadataItem={{ zabbix_host_metadata }}
+RefreshActiveChecks=120
+

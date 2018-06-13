@@ -1,0 +1,44 @@
+---
+# tasks file for zabbixagent
+- name: import zabbix gpg key
+  rpm_key:
+    key: http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
+    state: present
+
+- name: configure zabbix repo
+  yum_repository:
+    name: zabbix
+    description: zabbix repo for agent
+    file: zabbix
+    baseurl: https://repo.zabbix.com/zabbix/3.4/rhel/$releasever/$basearch/
+    gpgcheck: yes
+    enabled: yes
+
+- name: Install zabbix agent
+  package:
+    name: zabbix-agent
+    state: present
+
+- name: Copy zabbix conf template
+  template:
+    src: zabbix_agentd.conf.j2
+    dest: /etc/zabbix/zabbix_agentd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart zabbix agent
+
+- name: Start zabbix agent
+  service:
+    name: zabbix-agent
+    state: started 
+    enabled: yes
+
+- name: Open zabbix agent port
+  firewalld:
+    port: "{{ zabbix_port}}/tcp"
+    permanent: true
+    state: enabled
+  notify: reload firewall
+
+
